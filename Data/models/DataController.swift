@@ -185,7 +185,15 @@ public class DataController: NSObject {
             fatalError()
         }
         
-        return docURL.appendingPathComponent(DataController.databaseName)
+        var storeURL = docURL.appendingPathComponent(DataController.databaseName)
+        do {
+            var resources = URLResourceValues()
+            resources.isExcludedFromBackup = true
+            try storeURL.setResourceValues(resources)
+        } catch {
+            log.error("Could not exclude URL from backup")
+        }
+        return storeURL
     }()
     
     private static func newBackgroundContext() -> NSManagedObjectContext {

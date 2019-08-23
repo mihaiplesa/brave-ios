@@ -77,6 +77,14 @@ extension Preferences {
         /// Version of downloaded data file for adblock stats.
         public static let adblockStatsDataVersion = Option<Int?>(key: "stats.adblock-data-version", default: nil)
     }
+    public final class Review {
+        /// Application Launch Count (how many times the application has been launched)
+        public static let launchCount = Option<Int>(key: "review.launch-count", default: 0)
+        /// Review Threshold (the total amount of launches needed for the next review to show up)
+        public static let threshold = Option<AppReview.ReviewThreshold>(key: "review.threshold", default: AppReview.ReviewThreshold.first)
+        /// Last Review Date
+        public static let lastReviewDate = Option<Date?>(key: "review.last-date", default: nil)
+    }
 }
 
 extension Preferences {

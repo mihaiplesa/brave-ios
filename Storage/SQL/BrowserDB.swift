@@ -23,7 +23,17 @@ open class BrowserDB {
 
         // Probably will be removed with Storage framework
         // swiftlint:disable:next force_try
-        let file = URL(fileURLWithPath: (try! files.getAndEnsureDirectory())).appendingPathComponent(filename).path
+        var storeURL = URL(fileURLWithPath: (try! files.getAndEnsureDirectory())).appendingPathComponent(filename)
+        
+        let file = storeURL.path
+        
+        do {
+            var resources = URLResourceValues()
+            resources.isExcludedFromBackup = true
+            try storeURL.setResourceValues(resources)
+        } catch {
+            log.error("Could not exclude URL from backup: \(file)")
+        }
 
         if AppConstants.BuildChannel == .developer && secretKey != nil {
             log.debug("Will attempt to use encrypted DB: \(file) with secret = \(secretKey ?? "nil")")

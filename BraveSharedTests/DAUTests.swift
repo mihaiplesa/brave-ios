@@ -241,6 +241,38 @@ class DAUTests: XCTestCase {
         XCTAssertFalse(dau.sendPingToServer())
     }
     
+    func testAppReview() {
+        Preferences.Review.lastReviewDate.value = nil
+        Preferences.Review.launchCount.value = 0
+        
+        XCTAssertFalse(AppReview.requestReviewIfNecessary(date: Date()))
+        
+        var components = DateComponents()
+        components.day = AppReview.MINIMUM_DAYS_BETWEEN_REVIEWS + 3
+        
+        guard let date = Calendar.current.date(byAdding: components, to: Date()) else {
+            XCTFail("Cannot create calendar date for App Review.")
+            return
+        }
+        
+        Preferences.Review.lastReviewDate.value = Date()
+        
+        Preferences.Review.launchCount.value = AppReview.ReviewThreshold.first.rawValue
+        XCTAssertTrue(AppReview.requestReviewIfNecessary(date: date))
+
+        Preferences.Review.lastReviewDate.value = Date()
+        Preferences.Review.launchCount.value = AppReview.ReviewThreshold.second.rawValue
+        XCTAssertTrue(AppReview.requestReviewIfNecessary(date: date))
+        
+        Preferences.Review.lastReviewDate.value = Date()
+        Preferences.Review.launchCount.value = AppReview.ReviewThreshold.third.rawValue
+        XCTAssertTrue(AppReview.requestReviewIfNecessary(date: date))
+        
+        Preferences.Review.lastReviewDate.value = Date()
+        Preferences.Review.launchCount.value = AppReview.ReviewThreshold.third.rawValue + AppReview.MINIMUM_DAYS_BETWEEN_REVIEWS
+        XCTAssertTrue(AppReview.requestReviewIfNecessary(date: date))
+    }
+    
     // MARK: Helpers
     
     private func dateFrom(string: String, format: String? = nil) -> Date {
